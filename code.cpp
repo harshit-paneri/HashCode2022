@@ -2,64 +2,89 @@
 #include <unordered_set>
 #include <unordered_map>
 using namespace std;
-
-class ingri{
-    public:
-    string name;
-    int likeCnt, dislikeCnt;
-    ingri(string val){
-        name = val;
-        likeCnt = 0;
-        dislikeCnt = 0;
+vector<vector<string>> like;
+vector<vector<string>> dislike;
+int maxCust = 0;
+unordered_set<string> finalIngri;
+void simulator(unordered_set<string> total,int cust){
+    int count = 0;    
+    int flag;
+    for(int i=0;i<cust;i++){
+        flag = 1;
+        //like check
+        for(int j=0;j<like[i].size();j++){
+            if(total.find(like[i][j]) == total.end()){
+                flag = 0;
+                break;
+            }
+        }
+        //dislike check
+        if(flag){
+            for(int j=0;j<dislike[i].size();j++){
+                if(total.find(dislike[i][j]) != total.end()){
+                    flag = 0;
+                    break;
+                }
+            }
+        }
+        if(flag) count++;
     }
-};
+    if(count > maxCust){
+        finalIngri = total;
+        maxCust = count;
+    }  
+}
+void removeEle(vector<vector<string>> dislike,int i,unordered_set<string> total,int cust){
+    for(auto it:dislike[i]){
+        total.erase(it);
+    }
+    simulator(total,cust);
+}
 
 
 int main()
 {   
     long long cust;
     cin >> cust;
-    unordered_set<string> like;
-    unordered_set<string> dislike;
-    unordered_set<ingri*> total;
+    unordered_set<string> total;
+    /*
+    1 : like :- a,b,c dislike :- d,e
+    2 : like :- b,c,d dislike :- f
+    total : a,b,c,f
+    */
     for (int c = 0; c < cust; c++)
     {
         int l;
-        cin >> l;
+        cin >> l;//like input
+        vector<string> temp;
         while (l--)
         {
             string s;
             cin >> s;
-            ingri* temp = new ingri(s);
-            like.insert(s);
-            auto itr = total.find(temp);
-            if(itr == total.end()){
-                total.insert(temp);
-                temp->likeCnt = temp->likeCnt + 1;
-            }else{
-                (*itr)->likeCnt = (*itr)->likeCnt + 1;                
-            }
+            temp.push_back(s);
+            total.insert(s);            
         }
+        like.push_back(temp);
+        vector<string> temp1;
         int d;
-        cin >> d;
+        cin >> d;//dislike input
         while (d--)
         {
             string s;
             cin >> s;
-            ingri* temp = new ingri(s);
-            dislike.insert(s);
-            auto itr = total.find(temp);
-            if(itr == total.end()){
-                total.insert(temp);
-                temp->dislikeCnt = temp->dislikeCnt + 1;
-            }else{
-                (*itr)->dislikeCnt = (*itr)->dislikeCnt + 1;                
-            }
+            temp1.push_back(s);
+            total.insert(s);  
+            
         }
+        dislike.push_back(temp1);
     }
-    for(auto itr=total.begin(); itr != total.end();itr++){
-        cout<<(*itr)->name<<","<<(*itr)->likeCnt<<","<<(*itr)->dislikeCnt<<endl;
-    }
+    for(int i=0;i<cust;i++){
+        removeEle(dislike,i,total,cust);
+    }  
+    cout<<maxCust<<endl;
+    cout<<finalIngri.size()<<" ";
+    for(auto it:finalIngri) cout<<it<<" "; 
+
     
 
     return 0;
