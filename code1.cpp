@@ -75,6 +75,7 @@ void simulator(unordered_set<string> total, int cust)
         finalIngri = total;
         maxCust = count;
     }
+    cout<<maxCust<<endl;
 }
 void removeEle(vector<vector<string>> dislike, vector<int> idx, unordered_set<string> total, int cust)
 {
