@@ -7,7 +7,7 @@ vector<vector<string>> dislike;
 int maxCust = 0;
 unordered_set<string> finalIngri;
 void removeEle(vector<vector<string>>, vector<int>, unordered_set<string>, int);
-void subsetsUtil(unordered_set<string> total, int n, vector<vector<int>> &res, vector<int> &subset, int index)
+void subsetsUtil(unordered_set<string> total,int n,vector<int> &subset, int index)
 {
 
     //res.push_back(subset);
@@ -19,23 +19,12 @@ void subsetsUtil(unordered_set<string> total, int n, vector<vector<int>> &res, v
         subset.push_back(i);
 
         // move onto the next element.
-        subsetsUtil(total, n, res, subset, i + 1);
+        subsetsUtil(total, n,subset, i + 1);
 
         // exclude the A[i] from subset and triggers
         // backtracking.
         subset.pop_back();
     }
-    return;
-}
-void subsets(unordered_set<string> total, int n)
-{
-    vector<int> subset;
-    vector<vector<int>> res;
-
-    // keeps track of current element in vector A;
-    int index = 0;
-    subsetsUtil(total, n, res, subset, index);
-
     return;
 }
 
@@ -74,8 +63,9 @@ void simulator(unordered_set<string> total, int cust)
     {
         finalIngri = total;
         maxCust = count;
+	    cout<<maxCust<<endl;
     }
-    cout<<maxCust<<endl;
+    
 }
 void removeEle(vector<vector<string>> dislike, vector<int> idx, unordered_set<string> total, int cust)
 {
@@ -84,7 +74,7 @@ void removeEle(vector<vector<string>> dislike, vector<int> idx, unordered_set<st
     {
         for (auto it : dislike[i])
         {
-            total.erase(it);
+            if(total.find(it) != total.end()) total.erase(it);
         }
     }
     simulator(total, cust);
@@ -126,7 +116,8 @@ int main()
         }
         dislike.push_back(temp1);
     }
-    subsets(total,cust);
+    vector<int> subset;
+    subsetsUtil(total,cust,subset,0);
     cout << maxCust << endl;
     cout << finalIngri.size() << " ";
     for (auto it : finalIngri)
